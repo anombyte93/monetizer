@@ -36,6 +36,52 @@
         "Publish to npm with good README",
         "Submit to awesome-lists"
       ]
+    },
+    "advertising": {
+      "recommended": "EthicalAds + Carbon Ads (pre-qualified dev audience)",
+      "minimumSpend": "$1,000 (EthicalAds) or custom quote (Carbon)",
+      "expectedCPC": "$0.50-$3 for dev networks vs $2-$10 for Google/Meta",
+      "roi": "Higher for dev tools than Meta/Google due to audience match",
+      "platforms": {
+        "ethicalads": {
+          "url": "https://ethicalads.io",
+          "minSpend": "$1,000",
+          "cpm": "$3-$6",
+          "bestFor": "Open source, privacy-focused dev tools"
+        },
+        "carbonads": {
+          "url": "https://carbonads.net",
+          "minSpend": "Custom quote (~$1,500)",
+          "cpm": "Custom",
+          "bestFor": "Developer tools with broad appeal"
+        },
+        "google": {
+          "url": "https://ads.google.com",
+          "minSpend": "$500",
+          "cpc": "$2-$10",
+          "bestFor": "High-intent search traffic (use AFTER traction)"
+        }
+      },
+      "aiTools": {
+        "adcreative": {
+          "name": "AdCreative.ai",
+          "cost": "$21-$141/mo",
+          "purpose": "Generate visual ad creatives at scale"
+        },
+        "copyai": {
+          "name": "Copy.ai",
+          "cost": "$36-$186/mo",
+          "purpose": "Ad copy variations and landing pages"
+        }
+      },
+      "keySteps": [
+        "Run `monetizer ads --recommendations` for platform comparison",
+        "Start with EthicalAds $1k campaign targeting your dev niche",
+        "Use AdCreative.ai ($21/mo) to generate visual variations",
+        "Track conversions with UTM: ?utm_source=ethicalads&utm_campaign=launch",
+        "A/B test 3-5 headline variations minimum",
+        "Scale to Carbon Ads if EthicalAds shows positive ROI"
+      ]
     }
   },
   "fullResearch": {
