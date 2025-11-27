@@ -228,7 +228,7 @@ Be realistic about CPCs ($0.50-$3 for dev networks, $2-$10 for Google/Meta).`;
 
     return `Generate ${variations} ad copy variations for ${platform.toUpperCase()}.
 
-PROJECT: ${analysis.metadata?.name || 'Developer Tool'}
+PROJECT: ${analysis.metadata?.name || analysis.metadata?.path?.split('/').pop() || 'Developer Tool'}
 VALUE PROP: ${strategy.primaryMethod?.description || 'AI-powered developer tool'}
 PRICING: ${strategy.pricingModel?.tiers?.[0]?.price === 0 ? 'Free tier available' : `Starting at $${strategy.pricingModel?.tiers?.[0]?.price}/mo`}
 

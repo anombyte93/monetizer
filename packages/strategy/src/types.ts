@@ -12,6 +12,9 @@ export interface ProjectAnalysis {
   metadata?: {
     path: string;
     analyzedAt: string;
+    name?: string;
+    description?: string;
+    detectedFeatures?: string[];
   };
 }
 

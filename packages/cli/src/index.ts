@@ -6,6 +6,7 @@ import { strategyCommand } from './commands/strategy.js';
 import { executeCommand } from './commands/execute.js';
 import { gtmCommand } from './commands/gtm.js';
 import { adsCommand } from './commands/ads.js';
+import { campaignCommand } from './commands/campaign.js';
 import chalk from 'chalk';
 
 const program = new Command();
@@ -34,6 +35,7 @@ ${chalk.bold('Examples:')}
   ${chalk.cyan('$')} monetizer execute --method speed ${chalk.dim('# Fast orchestration')}
   ${chalk.cyan('$')} monetizer gtm --ph               ${chalk.dim('# Product Hunt launch plan')}
   ${chalk.cyan('$')} monetizer ads --budget 1000      ${chalk.dim('# AI advertising strategy')}
+  ${chalk.cyan('$')} monetizer campaign --images      ${chalk.dim('# Full AI content campaign')}
 
 ${chalk.dim('Need help? Visit https://github.com/monetizer/docs')}
 `;
@@ -45,6 +47,7 @@ program.addCommand(strategyCommand);
 program.addCommand(executeCommand);
 program.addCommand(gtmCommand);
 program.addCommand(adsCommand);
+program.addCommand(campaignCommand);
 
 // Handle unknown commands gracefully
 program.on('command:*', function () {
