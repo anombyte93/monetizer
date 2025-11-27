@@ -179,10 +179,15 @@ export interface ResearchResult {
   sources: string[];
 }
 
+// AI Provider type
+export type AIProvider = 'anthropic' | 'openai';
+
 // Generator options
 export interface StrategyGeneratorOptions {
-  anthropicApiKey: string;
+  anthropicApiKey?: string;
+  openaiApiKey?: string;
   perplexityApiKey?: string;
+  provider?: AIProvider;
   model?: string;
   includeResearch?: boolean;
   targetRevenue?: number;

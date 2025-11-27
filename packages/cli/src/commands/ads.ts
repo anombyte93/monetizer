@@ -53,14 +53,23 @@ export const adsCommand = new Command('ads')
       const analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
       const strategy = JSON.parse(fs.readFileSync(strategyPath, 'utf-8'));
 
-      const apiKey = process.env.ANTHROPIC_API_KEY;
-      if (!apiKey) {
+      const anthropicKey = process.env.ANTHROPIC_API_KEY;
+      const openaiKey = process.env.OPENAI_API_KEY;
+
+      if (!anthropicKey && !openaiKey) {
         spinner.fail('API key not found');
-        displayError('Set ANTHROPIC_API_KEY environment variable.');
+        displayError('Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable.');
         process.exit(1);
       }
 
-      const generator = new AdCopyGenerator({ anthropicApiKey: apiKey });
+      // AdCopyGenerator currently requires Anthropic, but we check for any key for future flexibility
+      if (!anthropicKey) {
+        spinner.fail('Anthropic API key required');
+        displayError('The ads command currently requires ANTHROPIC_API_KEY. OpenAI support coming soon.');
+        process.exit(1);
+      }
+
+      const generator = new AdCopyGenerator({ anthropicApiKey: anthropicKey });
       const budget = parseInt(options.budget, 10);
 
       // Generate platform-specific copy or full strategy

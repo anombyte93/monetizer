@@ -6,14 +6,17 @@ import path from 'path';
 import fs from 'fs';
 
 const ConfigSchema = z.object({
-  ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
   PERPLEXITY_API_KEY: z.string().optional(),
   RAILWAY_TOKEN: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   GITHUB_TOKEN: z.string().optional(),
-  OPENAI_API_KEY: z.string().optional(),
-});
+}).refine(
+  (data) => data.ANTHROPIC_API_KEY || data.OPENAI_API_KEY,
+  { message: 'Either ANTHROPIC_API_KEY or OPENAI_API_KEY is required' }
+);
 
 export type Config = z.infer<typeof ConfigSchema>;
 
@@ -50,8 +53,9 @@ export function loadConfig(projectPath?: string): Config {
         console.error(chalk.red(`  " ${err.path.join('.')}: ${err.message}`));
       });
 
-      console.log('\n' + chalk.yellow('Required:'));
-      console.log(chalk.dim('  " ANTHROPIC_API_KEY'));
+      console.log('\n' + chalk.yellow('Required (at least one):'));
+      console.log(chalk.dim('  " ANTHROPIC_API_KEY - Claude AI (recommended)'));
+      console.log(chalk.dim('  " OPENAI_API_KEY - GPT-4 (alternative)'));
 
       console.log('\n' + chalk.yellow('Optional (enhances functionality):'));
       console.log(chalk.dim('  " PERPLEXITY_API_KEY (for market research)'));

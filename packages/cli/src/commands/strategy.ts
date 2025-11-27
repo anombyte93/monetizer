@@ -43,10 +43,12 @@ export const strategyCommand = new Command('strategy')
         analysis = { potential: { score: 5 }, opportunities: [] };
       }
 
-      const apiKey = process.env.ANTHROPIC_API_KEY;
-      if (!apiKey) {
+      const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+
+      if (!anthropicApiKey && !openaiApiKey) {
         spinner.fail('Strategy generation failed');
-        displayError('Anthropic API key not found. Set ANTHROPIC_API_KEY before running this command.');
+        displayError('No AI API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY before running this command.');
         process.exit(1);
       }
 
@@ -85,9 +87,11 @@ export const strategyCommand = new Command('strategy')
         };
       }
 
-      spinner.text = 'Generating strategy with Claude...';
+      const providerName = anthropicApiKey ? 'Claude' : 'GPT-4';
+      spinner.text = `Generating strategy with ${providerName}...`;
       const generator = new StrategyGenerator({
-        anthropicApiKey: apiKey,
+        anthropicApiKey,
+        openaiApiKey,
       });
       const strategy = await generator.generate(analysis, {
         includeResearch: options.research,

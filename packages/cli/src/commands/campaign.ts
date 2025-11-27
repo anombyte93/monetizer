@@ -69,9 +69,18 @@ export const campaignCommand = new Command('campaign')
 
       // Check API keys
       const anthropicKey = process.env.ANTHROPIC_API_KEY;
-      if (!anthropicKey) {
+      const openaiKey = process.env.OPENAI_API_KEY;
+
+      if (!anthropicKey && !openaiKey) {
         spinner.fail('API key not found');
-        displayError('Set ANTHROPIC_API_KEY environment variable.');
+        displayError('Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable.');
+        process.exit(1);
+      }
+
+      // ContentOrchestrator currently requires Anthropic
+      if (!anthropicKey) {
+        spinner.fail('Anthropic API key required');
+        displayError('The campaign command currently requires ANTHROPIC_API_KEY. OpenAI support coming soon.');
         process.exit(1);
       }
 

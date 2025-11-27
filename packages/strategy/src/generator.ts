@@ -1,6 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { randomUUID } from 'crypto';
 import {
+  AIProvider,
   GenerateOptions,
   ImplementationPlan,
   MonetizationStrategy,
@@ -10,21 +12,44 @@ import {
   StrategyType,
 } from './types';
 
-const DEFAULT_MODEL = 'claude-3-5-sonnet-20240620';
+const DEFAULT_ANTHROPIC_MODEL = 'claude-3-5-sonnet-20240620';
+const DEFAULT_OPENAI_MODEL = 'gpt-4o';
 
 export class StrategyGenerator {
-  private anthropic: Anthropic;
+  private anthropic: Anthropic | null = null;
+  private openai: OpenAI | null = null;
+  private provider: AIProvider;
   private model: string;
   private baseOptions: StrategyGeneratorOptions;
 
   constructor(options: StrategyGeneratorOptions) {
-    if (!options?.anthropicApiKey) {
-      throw new Error('Anthropic API key is required to generate strategies.');
+    // Determine which provider to use
+    if (options.provider) {
+      this.provider = options.provider;
+    } else if (options.anthropicApiKey) {
+      this.provider = 'anthropic';
+    } else if (options.openaiApiKey) {
+      this.provider = 'openai';
+    } else {
+      throw new Error('Either Anthropic or OpenAI API key is required to generate strategies.');
     }
 
     this.baseOptions = options;
-    this.model = options.model ?? DEFAULT_MODEL;
-    this.anthropic = new Anthropic({ apiKey: options.anthropicApiKey });
+
+    // Initialize the appropriate client
+    if (this.provider === 'anthropic') {
+      if (!options.anthropicApiKey) {
+        throw new Error('Anthropic API key is required when using Anthropic provider.');
+      }
+      this.anthropic = new Anthropic({ apiKey: options.anthropicApiKey });
+      this.model = options.model ?? DEFAULT_ANTHROPIC_MODEL;
+    } else {
+      if (!options.openaiApiKey) {
+        throw new Error('OpenAI API key is required when using OpenAI provider.');
+      }
+      this.openai = new OpenAI({ apiKey: options.openaiApiKey });
+      this.model = options.model ?? DEFAULT_OPENAI_MODEL;
+    }
   }
 
   async generate(analysis: ProjectAnalysis, options?: GenerateOptions): Promise<MonetizationStrategy> {
@@ -40,7 +65,7 @@ export class StrategyGenerator {
     };
 
     const prompt = this.buildPrompt(analysis, generationOptions);
-    const responseText = await this.callClaude(prompt);
+    const responseText = await this.callAI(prompt);
     const rawStrategy = this.parseJsonResponse(responseText);
     const strategy = this.composeStrategy(rawStrategy, analysis, generationOptions.includeResearch);
 
@@ -49,16 +74,28 @@ export class StrategyGenerator {
     return strategy;
   }
 
-  private async callClaude(prompt: string): Promise<string> {
+  private async callAI(prompt: string): Promise<string> {
+    const systemPrompt =
+      'You are an expert software product monetization strategist. ' +
+      'Generate concise, actionable strategies with clear pricing, implementation phases, and revenue projections. ' +
+      'Respond with a single valid JSON object that matches the requested structure. Do not include any prose or commentary.';
+
+    if (this.provider === 'anthropic' && this.anthropic) {
+      return this.callAnthropic(prompt, systemPrompt);
+    } else if (this.openai) {
+      return this.callOpenAI(prompt, systemPrompt);
+    }
+
+    throw new Error('No AI provider configured');
+  }
+
+  private async callAnthropic(prompt: string, systemPrompt: string): Promise<string> {
     try {
-      const response = await this.anthropic.messages.create({
+      const response = await this.anthropic!.messages.create({
         model: this.model,
         max_tokens: 1800,
         temperature: 0.3,
-        system:
-          'You are an expert software product monetization strategist. ' +
-          'Generate concise, actionable strategies with clear pricing, implementation phases, and revenue projections. ' +
-          'Respond with a single valid JSON object that matches the requested structure. Do not include any prose or commentary.',
+        system: systemPrompt,
         messages: [
           {
             role: 'user',
@@ -73,13 +110,44 @@ export class StrategyGenerator {
         .trim();
 
       if (!textContent) {
-        throw new Error('Claude returned an empty response.');
+        throw new Error('Anthropic returned an empty response.');
       }
 
       return textContent;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to generate strategy with Claude: ${message}`);
+      throw new Error(`Failed to generate strategy with Anthropic: ${message}`);
+    }
+  }
+
+  private async callOpenAI(prompt: string, systemPrompt: string): Promise<string> {
+    try {
+      const response = await this.openai!.chat.completions.create({
+        model: this.model,
+        max_tokens: 2000,
+        temperature: 0.3,
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      });
+
+      const textContent = response.choices[0]?.message?.content?.trim() ?? '';
+
+      if (!textContent) {
+        throw new Error('OpenAI returned an empty response.');
+      }
+
+      return textContent;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to generate strategy with OpenAI: ${message}`);
     }
   }
 
@@ -141,7 +209,7 @@ export class StrategyGenerator {
       return JSON.parse(jsonString);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown parse error';
-      throw new Error(`Claude response could not be parsed as JSON: ${message}`);
+      throw new Error(`AI response could not be parsed as JSON: ${message}`);
     }
   }
 

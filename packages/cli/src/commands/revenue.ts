@@ -71,14 +71,23 @@ export const revenueCommand = new Command('revenue')
       const analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
       const strategy = JSON.parse(fs.readFileSync(strategyPath, 'utf-8'));
 
-      const apiKey = process.env.ANTHROPIC_API_KEY;
-      if (!apiKey) {
+      const anthropicKey = process.env.ANTHROPIC_API_KEY;
+      const openaiKey = process.env.OPENAI_API_KEY;
+
+      if (!anthropicKey && !openaiKey) {
         spinner.fail('API key not found');
-        displayError('Set ANTHROPIC_API_KEY environment variable.');
+        displayError('Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable.');
         process.exit(1);
       }
 
-      const generator = new RevenueMultiplierGenerator({ anthropicApiKey: apiKey });
+      // RevenueMultiplierGenerator currently requires Anthropic
+      if (!anthropicKey) {
+        spinner.fail('Anthropic API key required');
+        displayError('The revenue command currently requires ANTHROPIC_API_KEY. OpenAI support coming soon.');
+        process.exit(1);
+      }
+
+      const generator = new RevenueMultiplierGenerator({ anthropicApiKey: anthropicKey });
       const currentMRR = parseInt(options.currentMrr, 10);
       const targetMRR = parseInt(options.targetMrr, 10);
 

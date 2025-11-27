@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
+    "openai": "^4.20.0",
     "@monetizer/shared": "workspace:*",
     "@monetizer/analyzer": "workspace:*"
   },
