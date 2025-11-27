@@ -1,0 +1,13 @@
+# Nixpacks configuration for Railway deployment
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+cmds = ["corepack enable"]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm --filter @monetizer/ui build"]
+
+[start]
+cmd = "cd packages/ui && pnpm start"
