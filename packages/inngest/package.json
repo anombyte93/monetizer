@@ -1,0 +1,20 @@
+{
+  "name": "@monetizer/inngest",
+  "version": "0.1.0",
+  "description": "Durable workflows for monetization operations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "inngest": "^3.0.0",
+    "@monetizer/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

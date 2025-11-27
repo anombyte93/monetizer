@@ -1,0 +1,38 @@
+{
+  "name": "@monetizer/cli",
+  "version": "0.1.0",
+  "description": "Command-line interface for Monetizer - Transform any project into revenue",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "monetizer": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"Tests not yet implemented\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "ora": "^7.0.1",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12",
+    "boxen": "^7.1.1",
+    "dotenv": "^16.3.1",
+    "zod": "^3.22.4",
+    "@monetizer/shared": "workspace:*",
+    "@monetizer/analyzer": "workspace:*",
+    "@monetizer/strategy": "workspace:*",
+    "@monetizer/orchestrator": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.6",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

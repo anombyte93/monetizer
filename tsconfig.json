@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "removeComments": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "paths": {
+      "@monetizer/cli": ["./packages/cli/src"],
+      "@monetizer/analyzer": ["./packages/analyzer/src"],
+      "@monetizer/strategy": ["./packages/strategy/src"],
+      "@monetizer/orchestrator": ["./packages/orchestrator/src"],
+      "@monetizer/agents": ["./packages/agents/src"],
+      "@monetizer/metrics": ["./packages/metrics/src"],
+      "@monetizer/ui": ["./packages/ui/src"],
+      "@monetizer/shared": ["./packages/shared/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next", "coverage"]
+}

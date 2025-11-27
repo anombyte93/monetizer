@@ -1,0 +1,23 @@
+{
+  "name": "@monetizer/strategy",
+  "version": "0.1.0",
+  "description": "AI-powered monetization strategy generator",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"Tests not yet implemented\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "@monetizer/shared": "workspace:*",
+    "@monetizer/analyzer": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,548 @@
+# MONETIZER - Project Monetization Accelerator
+## Product Requirements Document v1.0
+
+### Executive Summary
+
+Monetizer is an AI-powered tool that analyzes any project directory/git repository and generates the fastest path to monetization. It spawns 3 parallel implementation workflows, each using different orchestration methods, to produce 3 fully functional monetizable products. The tool tracks which workflow produces the most successful outcome and generates actionable go-to-market plans.
+
+**Core Value Proposition**: Transform any codebase into revenue in weeks, not months.
+
+**Primary Success Metric**: $100 MRR within 90 days of tool completion.
+
+**Meta-Goal**: This tool will be its own first customer (dogfooding).
+
+---
+
+## PHASE 1: MVP - Core Analysis & Single Workflow (Weeks 1-2)
+
+### 1.1 Project Analysis Engine
+**Priority: P0 (Must Have)**
+
+The core engine that analyzes any project directory to understand:
+- Tech stack detection (package.json, requirements.txt, go.mod, Cargo.toml, etc.)
+- Git health metrics (commit frequency, contributors, activity, age)
+- Code complexity analysis (cyclomatic complexity, lines of code, file structure)
+- Existing monetization signals (stripe keys, payment endpoints, pricing pages)
+- Project maturity score (tests, docs, CI/CD, dependencies)
+
+**Technical Implementation**:
+- Use `simple-git` for git repository analysis
+- Use `tree-sitter` + `@babel/parser` for AST-based code analysis
+- File pattern matching for tech stack detection
+- Custom scoring algorithm combining all metrics
+
+**Acceptance Criteria**:
+- Analyzes any Node.js, Python, Go, or Rust project in <30 seconds
+- Outputs structured JSON with all metrics
+- Provides human-readable summary with monetization potential score (1-10)
+
+### 1.2 Monetization Strategy Generator
+**Priority: P0 (Must Have)**
+
+AI-powered analysis that determines optimal monetization path based on:
+- Project type (SaaS, CLI tool, library, API, etc.)
+- Market research (competitors, pricing benchmarks, demand signals)
+- Technical feasibility (what can be monetized without major refactoring)
+- Time-to-revenue estimate
+
+**Output Structure**:
+- Primary monetization model (SaaS subscription, one-time, freemium, usage-based)
+- Recommended pricing tiers (3-4 tiers with specific prices)
+- Required changes/additions to enable monetization
+- Competitive positioning statement
+- 30-day action plan
+
+**Technical Implementation**:
+- LangGraph agent with Claude for strategy generation
+- Perplexity integration for real-time market research
+- Template library for common monetization patterns
+
+**Acceptance Criteria**:
+- Generates strategy for any analyzed project in <2 minutes
+- Includes at least 3 specific competitor examples with pricing
+- Provides actionable next steps, not generic advice
+
+### 1.3 Git Repository Setup
+**Priority: P1 (Should Have)**
+
+If project is not a git repo, offer to initialize one:
+- Create .gitignore based on detected tech stack
+- Initial commit with meaningful message
+- Suggest GitHub repository creation
+- Set up branch strategy (main, develop, feature branches)
+
+**Acceptance Criteria**:
+- Detects non-repo projects and prompts user
+- Creates appropriate .gitignore for tech stack
+- Provides clear instructions for remote setup
+
+### 1.4 CLI Interface
+**Priority: P0 (Must Have)**
+
+Simple, elegant command-line interface:
+```bash
+monetizer analyze .                    # Analyze current directory
+monetizer analyze /path/to/project     # Analyze specific path
+monetizer analyze https://github.com/user/repo  # Analyze remote repo
+monetizer strategy                     # Generate monetization strategy
+monetizer execute                      # Execute workflow (Phase 2+)
+```
+
+**Technical Implementation**:
+- Commander.js for CLI framework
+- Ora for spinners/progress
+- Chalk for colored output
+- Inquirer for interactive prompts
+
+**Acceptance Criteria**:
+- Time to first insight <30 seconds
+- Clear, scannable output format
+- Help command with examples
+
+---
+
+## PHASE 2: Parallel Workflow Executor (Weeks 3-4)
+
+### 2.1 Workflow Definition System
+**Priority: P0 (Must Have)**
+
+System for defining monetization workflows as composable steps:
+- Step types: code generation, file modification, API call, human review, deployment
+- Dependency graph between steps
+- Retry and fallback logic
+- Progress tracking and checkpointing
+
+**Technical Implementation**:
+- Inngest for durable workflow execution
+- JSON/YAML workflow definitions
+- Event-driven step coordination
+- Redis for state persistence
+
+**Workflow Structure**:
+```yaml
+workflow:
+  name: "SaaS Monetization"
+  steps:
+    - id: add-pricing-page
+      type: code-generation
+      agent: developer
+      input: { template: "pricing-page", stack: "${project.stack}" }
+    - id: integrate-stripe
+      type: code-generation
+      depends_on: [add-pricing-page]
+      agent: developer
+      input: { integration: "stripe", model: "${strategy.pricing}" }
+    - id: deploy-staging
+      type: deployment
+      depends_on: [integrate-stripe]
+      target: "railway"
+```
+
+### 2.2 Three Orchestrator Architecture
+**Priority: P0 (Must Have)**
+
+Three independent orchestrators, each managing a complete product build:
+
+**Orchestrator A - "Developer-Led"**:
+- Primary agent: Developer (code-focused)
+- Secondary agents: Architect, Tester
+- Workflow method: Sequential with checkpoints
+- Parallel tool: Claude Task agents
+- Focus: Code quality, test coverage, clean architecture
+
+**Orchestrator B - "Speed-Led"**:
+- Primary agent: Builder (ship fast)
+- Secondary agents: Validator, Deployer
+- Workflow method: Parallel execution where possible
+- Parallel tool: parallel-ultra waves
+- Focus: Time to market, working product, iterate later
+
+**Orchestrator C - "Research-Led"**:
+- Primary agent: Researcher (market-informed)
+- Secondary agents: Strategist, Developer
+- Workflow method: Research -> Plan -> Execute cycles
+- Parallel tool: TaskMaster with research expansion
+- Focus: Market fit, competitive positioning, validated features
+
+**Technical Implementation**:
+- Each orchestrator runs in isolated environment
+- Separate git branches for each implementation
+- Shared event bus for progress reporting
+- Central metrics aggregator for comparison
+
+### 2.3 Agent Team System
+**Priority: P0 (Must Have)**
+
+Specialized AI agents for different tasks:
+
+**Developer Agent**:
+- Code generation and modification
+- Bug fixing and refactoring
+- Test writing
+- Tools: Edit, Write, Bash, Grep
+
+**Architect Agent**:
+- System design decisions
+- Tech stack recommendations
+- Integration patterns
+- Tools: Read, Grep, Perplexity
+
+**Researcher Agent**:
+- Market research
+- Competitor analysis
+- Pricing intelligence
+- Tools: Perplexity, WebFetch, WebSearch
+
+**Strategist Agent**:
+- Business model design
+- Go-to-market planning
+- Launch sequencing
+- Tools: Read, Write, Perplexity
+
+**Validator Agent**:
+- Steve (simplicity) checks
+- Karen (verification) checks
+- Quality gates
+- Tools: Read, Bash (tests), custom validators
+
+**Technical Implementation**:
+- LangGraph for agent orchestration
+- Shared state object for context
+- Tool permissions per agent role
+- Claude as base model for all agents
+
+### 2.4 Repository Creation & Management
+**Priority: P1 (Should Have)**
+
+Create and manage 3 separate repositories for parallel implementations:
+- Auto-create GitHub repos with meaningful names
+- Branch from original project or start fresh
+- Sync common configurations
+- Track divergence metrics
+
+**Acceptance Criteria**:
+- Creates 3 repos with single command
+- Each repo is independently deployable
+- Clear naming convention (project-variant-a, project-variant-b, project-variant-c)
+
+---
+
+## PHASE 3: Metrics & Comparison System (Weeks 5-6)
+
+### 3.1 Workflow Performance Tracking
+**Priority: P0 (Must Have)**
+
+Track metrics for each workflow:
+- Time to completion (total, per-step)
+- Code metrics (lines added, files created, test coverage)
+- Agent efficiency (tokens used, retry count, success rate)
+- Deployment success rate
+- Error patterns and recovery times
+
+**Technical Implementation**:
+- PostgreSQL for metrics storage
+- Event sourcing for complete audit trail
+- Real-time dashboard updates
+- Aggregate comparison views
+
+### 3.2 Product Quality Scoring
+**Priority: P0 (Must Have)**
+
+Automated quality assessment for each product:
+- Code quality (linting, complexity, maintainability)
+- Test coverage and pass rate
+- Documentation completeness
+- Deployment stability
+- Performance benchmarks (if applicable)
+
+**Scoring Formula**:
+```
+quality_score = (
+  code_quality * 0.25 +
+  test_coverage * 0.20 +
+  docs_completeness * 0.15 +
+  deploy_stability * 0.25 +
+  performance * 0.15
+) * maturity_multiplier
+```
+
+### 3.3 Market Readiness Assessment
+**Priority: P1 (Should Have)**
+
+Evaluate each product's readiness for market:
+- Feature completeness vs. strategy requirements
+- Pricing implementation verified
+- Payment flow tested
+- Landing page quality
+- Launch checklist completion percentage
+
+### 3.4 Winner Selection Algorithm
+**Priority: P1 (Should Have)**
+
+Algorithm to determine which workflow produced the best product:
+- Weighted scoring across all metrics
+- Time-to-completion factor
+- Quality-speed tradeoff optimization
+- Human override option
+
+**Output**: Clear recommendation with reasoning for which product to take to market.
+
+---
+
+## PHASE 4: Web UI for Control & Visualization (Weeks 7-8)
+
+### 4.1 Dashboard Overview
+**Priority: P1 (Should Have)**
+
+Web interface showing:
+- Active workflows and their status
+- Real-time progress for all 3 implementations
+- Comparative metrics visualization
+- Agent activity feed
+
+**Technical Implementation**:
+- Next.js for fast development
+- Tailwind CSS for styling
+- React Query for data fetching
+- Recharts for visualizations
+
+### 4.2 Workflow Control Panel
+**Priority: P1 (Should Have)**
+
+Control interface for:
+- Start/pause/cancel workflows
+- Manual step approval gates
+- Parameter adjustment mid-flight
+- Agent intervention points
+
+### 4.3 Metrics Comparison View
+**Priority: P1 (Should Have)**
+
+Side-by-side comparison showing:
+- Three columns (one per implementation)
+- Live updating metrics
+- Winner highlighting
+- Export to markdown/PDF
+
+### 4.4 Settings & Configuration
+**Priority: P2 (Nice to Have)**
+
+Configurable options:
+- Agent model selection (Claude Sonnet vs Opus)
+- Workflow template selection
+- Deployment target preferences
+- Notification settings
+
+---
+
+## PHASE 5: Market Simulation (Weeks 9-10)
+
+### 5.1 Automated Market Testing
+**Priority: P2 (Nice to Have)**
+
+Simulate market response:
+- Landing page A/B testing setup
+- Pricing page optimization
+- Conversion funnel simulation
+- Competitive response modeling
+
+### 5.2 Pre-Launch Validation
+**Priority: P1 (Should Have)**
+
+Automated checks before real launch:
+- Steve validation (is it simple enough?)
+- Karen validation (is it actually done?)
+- Security audit (no exposed secrets, XSS, etc.)
+- Performance baseline
+
+---
+
+## PHASE 6: Go-to-Market Generation (Weeks 11-12)
+
+### 6.1 Launch Plan Generator
+**Priority: P0 (Must Have)**
+
+Automated generation of:
+- Product Hunt launch strategy (timing, assets, maker comment)
+- Social media launch sequence
+- Community engagement plan
+- Email marketing templates
+- Press kit / media assets
+
+### 6.2 Sales Enablement
+**Priority: P1 (Should Have)**
+
+Generated materials:
+- Pricing page copy
+- Feature comparison tables
+- Objection handling guide
+- Demo scripts
+- Case study templates
+
+### 6.3 First 30-Day Playbook
+**Priority: P0 (Must Have)**
+
+Actionable day-by-day plan:
+- Week 1: Pre-launch validation
+- Week 2: Soft launch to network
+- Week 3: Public launch (PH + communities)
+- Week 4: Optimization and iteration
+
+---
+
+## TECHNICAL ARCHITECTURE
+
+### Core Stack
+- **Language**: TypeScript (Node.js 20 LTS)
+- **Package Manager**: pnpm
+- **Monorepo**: Turborepo
+- **Database**: PostgreSQL (metrics, events)
+- **Cache**: Redis (state, repo analysis cache)
+- **Queue**: Redis Streams (event coordination)
+
+### AI Layer
+- **Agent Framework**: LangGraph (LangChain)
+- **Primary Model**: Claude 3.5 Sonnet (Anthropic API)
+- **Research Model**: Perplexity Pro
+- **Observability**: LangSmith
+
+### Workflow Engine
+- **Primary**: Inngest (event-driven durable functions)
+- **State**: Redis + PostgreSQL event sourcing
+- **Coordination**: Central orchestrator pattern with sagas
+
+### Analysis Layer
+- **Code Parsing**: tree-sitter + @babel/parser
+- **Git Analysis**: simple-git
+- **Metrics**: Custom analyzers + SonarQube API (optional)
+
+### Frontend (Phase 4)
+- **Framework**: Next.js 14
+- **Styling**: Tailwind CSS
+- **State**: React Query
+- **Charts**: Recharts
+
+### Deployment
+- **Primary**: Railway (for managed infra)
+- **Fallback**: Vercel (for Next.js frontend)
+- **CI/CD**: GitHub Actions
+
+---
+
+## PRICING STRATEGY (For Monetizer Tool Itself)
+
+### Tier Structure
+
+**Free / Open Source**:
+- Core CLI (project analysis, basic strategy)
+- Single workflow execution
+- Local metrics only
+- Community support
+- Target: Individual devs, learning
+
+**Solo ($29/month or $290/year)**:
+- Full analysis with AI research
+- 3 parallel workflow executions
+- Cloud metrics dashboard
+- 5 projects/month
+- Email support
+- Target: Indie hackers, side projects
+
+**Team ($49/user/month or $490/user/year, 2+ users)**:
+- Everything in Solo
+- Unlimited projects
+- Team workspace
+- Priority execution queue
+- Slack integration
+- Priority support + onboarding
+- Target: Small dev teams, agencies
+
+**Pro ($149/month or $1,490/year)**:
+- Everything in Team
+- Custom workflow templates
+- API access
+- White-label reports
+- Dedicated support channel
+- Custom integrations
+- Target: Professional developers, studios
+
+---
+
+## SUCCESS METRICS
+
+### MVP Success (Phase 1-2)
+- Analyze any project in <30 seconds
+- Generate strategy in <2 minutes
+- Execute single workflow end-to-end
+- Deploy one monetizable product
+
+### Full Product Success (Phase 3-6)
+- 3 parallel workflows complete without intervention
+- Clear winner identified with >20% score differential
+- Generated GTM plan followed to first $100 revenue
+- Tool used to monetize itself (dogfooding)
+
+### Business Success (90 days post-completion)
+- $100 MRR achieved
+- 10+ active users
+- 50+ projects analyzed
+- 3+ products successfully monetized
+
+---
+
+## RISKS & MITIGATIONS
+
+### Technical Risks
+- **LLM API costs**: Usage-based pricing, caching, rate limiting
+- **Workflow failures**: Saga compensation, retry logic, manual fallback
+- **Parallel complexity**: Isolated environments, clear state boundaries
+
+### Market Risks
+- **Crowded space**: Focus on developer-first, AI-native differentiation
+- **Low conversion**: Generous free tier, PLG motion
+- **Feature creep**: Steve validation gates, scope control
+
+### Execution Risks
+- **Solo founder bandwidth**: Parallel agent execution, automation-first
+- **Time to market**: MVP-first, iterate on feedback
+- **Dogfooding failure**: Use tool on itself from day 1
+
+---
+
+## IMPLEMENTATION PHASES
+
+### Phase 1: MVP Core (2 weeks)
+1. Project analysis engine
+2. Monetization strategy generator
+3. CLI interface
+4. Single workflow execution
+
+### Phase 2: Parallel Execution (2 weeks)
+1. Three orchestrator architecture
+2. Agent team system
+3. Repository management
+4. Workflow definitions
+
+### Phase 3: Metrics & Comparison (2 weeks)
+1. Performance tracking
+2. Quality scoring
+3. Winner selection
+4. Event sourcing
+
+### Phase 4: Web UI (2 weeks)
+1. Dashboard overview
+2. Control panel
+3. Comparison views
+4. Settings
+
+### Phase 5: Market Simulation (2 weeks)
+1. Automated testing
+2. Pre-launch validation
+3. Security audit
+4. Performance baseline
+
+### Phase 6: GTM Generation (2 weeks)
+1. Launch plan generator
+2. Sales enablement
+3. 30-day playbook
+4. Self-monetization

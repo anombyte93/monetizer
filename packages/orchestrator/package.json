@@ -1,0 +1,24 @@
+{
+  "name": "@monetizer/orchestrator",
+  "version": "0.1.0",
+  "description": "Workflow orchestration using Inngest",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"Tests not yet implemented\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "inngest": "^3.15.0",
+    "@monetizer/shared": "workspace:*",
+    "@monetizer/analyzer": "workspace:*",
+    "@monetizer/strategy": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

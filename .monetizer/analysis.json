@@ -1,0 +1,38 @@
+{
+  "techStack": {
+    "languages": [
+      "JavaScript/TypeScript"
+    ],
+    "frameworks": [],
+    "runtime": "Node.js",
+    "database": null,
+    "hasAPI": false,
+    "hasUI": false
+  },
+  "structure": {
+    "hasTests": false,
+    "hasDocumentation": true,
+    "hasCICD": false,
+    "hasDocker": false,
+    "linesOfCode": 15150,
+    "fileCount": 303
+  },
+  "potential": {
+    "score": 7,
+    "readiness": "Medium",
+    "factors": {
+      "techStack": "Partial",
+      "maturity": "Mature",
+      "infrastructure": "Needs work"
+    }
+  },
+  "opportunities": [
+    {
+      "type": "Open Source Sponsorship",
+      "confidence": "Medium",
+      "description": "GitHub Sponsors / Open Collective",
+      "estimatedEffort": "Low",
+      "potentialRevenue": "Low to Medium"
+    }
+  ]
+}

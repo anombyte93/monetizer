@@ -1,0 +1,46 @@
+{
+  "researchDate": "2025-11-27",
+  "summary": {
+    "deployment": {
+      "recommended": "Vercel (zero-config Next.js) or Railway (cheaper, we have MCP)",
+      "timeToFirstDeploy": "20 minutes",
+      "monthlyCost": "$5-25",
+      "keySteps": [
+        "Connect GitHub repo",
+        "Set rootDirectory to packages/ui",
+        "Add env vars (ANTHROPIC_API_KEY, PERPLEXITY_API_KEY)",
+        "Push to main triggers deploy"
+      ]
+    },
+    "monetization": {
+      "recommended": "LemonSqueezy (MoR, handles VAT, no backend)",
+      "timeToFirstPayment": "2-4 hours",
+      "pricingTiers": {
+        "free": "$0 - Core CLI, 10 analyses/month",
+        "pro": "$12/mo or $96/yr - Unlimited, priority support",
+        "team": "$25/seat/mo (3 min) - Seat management, SSO"
+      },
+      "keySteps": [
+        "Create LemonSqueezy product",
+        "Add checkout link to README/docs/CLI",
+        "Set up license key delivery",
+        "Add upgrade prompt in CLI"
+      ]
+    },
+    "discovery": {
+      "recommended": "Product Hunt (Tue-Thu 12:01am PT) + Show HN + npm",
+      "timeToFirstUser": "Same day with coordinated launch",
+      "keySteps": [
+        "Prepare 60-90s demo video/GIF",
+        "Write Show HN post (no hype)",
+        "Publish to npm with good README",
+        "Submit to awesome-lists"
+      ]
+    }
+  },
+  "fullResearch": {
+    "deployment": "/tmp/research-deploy.json",
+    "monetization": "/tmp/research-monetize.json",
+    "discovery": "/tmp/research-discover.json"
+  }
+}
