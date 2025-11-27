@@ -11,6 +11,12 @@ export {
   CONTENT_PIPELINES,
   AI_TOOL_COSTS,
 } from './content-orchestrator';
+export {
+  RevenueMultiplierGenerator,
+  REVENUE_MULTIPLIER_CATALOG,
+  DEV_TOOL_AFFILIATE_PROGRAMS,
+  LEAD_SCORING_WEIGHTS,
+} from './revenue-multipliers';
 export * from './types';
 export type {
   AdCopy,
@@ -33,3 +39,16 @@ export type {
   CampaignMetrics,
   OrchestratorOptions,
 } from './content-orchestrator';
+export type {
+  RevenueMultiplierType,
+  RevenueMultiplier,
+  AffiliateProgram,
+  PricingExperiment,
+  LeadScore,
+  LeadSignal,
+  SponsorshipOpportunity,
+  SponsorMatch,
+  UpsellTrigger,
+  RevenueMultiplierStrategy,
+  MultiplierOptions,
+} from './revenue-multipliers';

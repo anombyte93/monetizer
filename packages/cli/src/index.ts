@@ -7,6 +7,7 @@ import { executeCommand } from './commands/execute.js';
 import { gtmCommand } from './commands/gtm.js';
 import { adsCommand } from './commands/ads.js';
 import { campaignCommand } from './commands/campaign.js';
+import { revenueCommand } from './commands/revenue.js';
 import chalk from 'chalk';
 
 const program = new Command();
@@ -36,6 +37,7 @@ ${chalk.bold('Examples:')}
   ${chalk.cyan('$')} monetizer gtm --ph               ${chalk.dim('# Product Hunt launch plan')}
   ${chalk.cyan('$')} monetizer ads --budget 1000      ${chalk.dim('# AI advertising strategy')}
   ${chalk.cyan('$')} monetizer campaign --images      ${chalk.dim('# Full AI content campaign')}
+  ${chalk.cyan('$')} monetizer revenue --affiliates   ${chalk.dim('# Revenue multipliers')}
 
 ${chalk.dim('Need help? Visit https://github.com/monetizer/docs')}
 `;
@@ -48,6 +50,7 @@ program.addCommand(executeCommand);
 program.addCommand(gtmCommand);
 program.addCommand(adsCommand);
 program.addCommand(campaignCommand);
+program.addCommand(revenueCommand);
 
 // Handle unknown commands gracefully
 program.on('command:*', function () {
