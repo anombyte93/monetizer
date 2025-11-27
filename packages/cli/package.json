@@ -1,7 +1,7 @@
 {
   "name": "@monetizer/cli",
   "version": "0.1.0",
-  "description": "Command-line interface for Monetizer - Transform any project into revenue",
+  "description": "AI-powered monetization strategy generator for any project. Analyze your codebase and get a complete revenue plan.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -14,7 +14,41 @@
     "lint": "eslint src --ext .ts",
     "test": "echo \"Tests not yet implemented\"",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "monetization",
+    "saas",
+    "developer-tools",
+    "cli",
+    "ai",
+    "claude",
+    "pricing",
+    "revenue",
+    "side-project",
+    "startup"
+  ],
+  "author": "Monetizer Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anombyte93/monetizer.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/anombyte93/monetizer/issues"
+  },
+  "homepage": "https://monetizer-ui-production.up.railway.app",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "commander": "^11.1.0",
