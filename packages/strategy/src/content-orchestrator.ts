@@ -17,6 +17,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { ProjectAnalysis, MonetizationStrategy } from './types';
+import { AIToolsClient, createAIToolsClient, GeneratedImage, GeneratedVideo } from './ai-tools-client';
 
 // ============================================================================
 // Type Definitions
@@ -153,6 +154,7 @@ export class ContentOrchestrator {
   private model: string;
   private skills: Map<ContentSkillType, ContentSkill[]> = new Map();
   private apiKeys: Record<string, string | undefined>;
+  private aiTools: AIToolsClient;
 
   constructor(options: OrchestratorOptions) {
     if (!options?.anthropicApiKey) {
@@ -174,6 +176,9 @@ export class ContentOrchestrator {
       meta: options.metaAccessToken,
       google: options.googleAdsToken,
     };
+
+    // Initialize the unified AI tools client for actual API calls
+    this.aiTools = createAIToolsClient();
 
     this.initializeSkills();
   }
@@ -604,39 +609,70 @@ Rules:
   }
 
   /**
-   * Generate images using DALL-E 3
+   * Generate images using DALL-E 3 via AIToolsClient
    */
   private async generateDalleImages(
     analysis: ProjectAnalysis,
     headlines: string[]
   ): Promise<GeneratedContent[]> {
-    // Note: This requires OpenAI SDK integration
-    // For now, return instructions with the prompt that would be used
     const prompts = headlines.slice(0, 3).map(headline =>
       `Minimalist tech advertisement for "${headline}". Clean design with dark gradient background, subtle code elements, modern sans-serif typography. Professional SaaS marketing style. No text in image.`
     );
 
-    return prompts.map((prompt, i) => ({
-      type: 'image' as const,
-      provider: 'dalle' as ContentProvider,
-      content: {
-        raw: '',
-        metadata: {
-          prompt,
-          headline: headlines[i],
-          model: 'dall-e-3',
+    const results: GeneratedContent[] = [];
+
+    for (let i = 0; i < prompts.length; i++) {
+      try {
+        const image: GeneratedImage = await this.aiTools.generateDalleImage(prompts[i], {
           size: '1024x1024',
           quality: 'standard',
-          note: 'Run with OPENAI_API_KEY to generate actual images',
-        },
-      },
-      cost: 0.04, // DALL-E 3 standard price
-      generatedAt: new Date(),
-    }));
+          style: 'vivid',
+        });
+
+        results.push({
+          type: 'image' as const,
+          provider: 'dalle' as ContentProvider,
+          content: {
+            raw: '',
+            url: image.url,
+            metadata: {
+              prompt: image.prompt || prompts[i],
+              headline: headlines[i],
+              model: 'dall-e-3',
+              ...image.metadata,
+            },
+          },
+          cost: image.cost,
+          generatedAt: new Date(),
+        });
+      } catch (error) {
+        // If API call fails, return instruction fallback
+        results.push({
+          type: 'image' as const,
+          provider: 'dalle' as ContentProvider,
+          content: {
+            raw: '',
+            metadata: {
+              prompt: prompts[i],
+              headline: headlines[i],
+              model: 'dall-e-3',
+              size: '1024x1024',
+              quality: 'standard',
+              error: error instanceof Error ? error.message : String(error),
+              note: 'Set OPENAI_API_KEY to generate actual images',
+            },
+          },
+          cost: 0,
+          generatedAt: new Date(),
+        });
+      }
+    }
+
+    return results;
   }
 
   /**
-   * Generate ad videos using available video APIs
+   * Generate ad videos using available video APIs via AIToolsClient
    */
   private async generateAdVideos(
     analysis: ProjectAnalysis,
@@ -645,6 +681,7 @@ Rules:
   ): Promise<GeneratedContent[]> {
     const videoSkills = this.skills.get('video') || [];
     const enabledSkill = videoSkills.find(s => s.enabled && s.apiKey);
+    const script = await this.generateVideoScript(analysis, strategy, content);
 
     if (!enabledSkill) {
       // Return instructions for manual video creation
@@ -655,7 +692,7 @@ Rules:
           raw: '',
           metadata: {
             instructions: `Create demo video for ${analysis.metadata?.name || analysis.metadata?.path?.split('/').pop() || 'Project'} launch`,
-            script: await this.generateVideoScript(analysis, strategy, content),
+            script,
             recommended_tools: [
               'Synthesia - https://synthesia.io ($22/mo) - AI avatar video',
               'HeyGen - https://heygen.com ($24/mo) - AI spokesperson',
@@ -671,7 +708,56 @@ Rules:
       }];
     }
 
-    return [];
+    // Use AIToolsClient for actual video generation
+    try {
+      const video: GeneratedVideo = await this.aiTools.generatePromoVideo({
+        script,
+        style: enabledSkill.provider === 'runway' ? 'motion' : 'avatar',
+      });
+
+      return [{
+        type: 'video',
+        provider: enabledSkill.provider as ContentProvider,
+        content: {
+          raw: '',
+          url: video.url,
+          metadata: {
+            videoId: video.id,
+            status: video.status,
+            script,
+            provider: video.provider,
+            duration: video.duration,
+            ...video.metadata,
+            note: video.status === 'processing'
+              ? 'Video is being generated. Check back in 2-5 minutes.'
+              : undefined,
+          },
+        },
+        cost: video.cost,
+        generatedAt: new Date(),
+      }];
+    } catch (error) {
+      // Fallback to instructions if API fails
+      return [{
+        type: 'video',
+        provider: enabledSkill.provider as ContentProvider,
+        content: {
+          raw: '',
+          metadata: {
+            script,
+            error: error instanceof Error ? error.message : String(error),
+            instructions: 'Video generation failed. Use the script above with:',
+            recommended_tools: [
+              'Synthesia - https://synthesia.io ($22/mo)',
+              'HeyGen - https://heygen.com ($24/mo)',
+              'Runway - https://runway.ml ($12/mo)',
+            ],
+          },
+        },
+        cost: 0,
+        generatedAt: new Date(),
+      }];
+    }
   }
 
   /**

@@ -17,6 +17,11 @@ export {
   DEV_TOOL_AFFILIATE_PROGRAMS,
   LEAD_SCORING_WEIGHTS,
 } from './revenue-multipliers';
+export {
+  AIToolsClient,
+  createAIToolsClient,
+  AI_TOOLS_ENV_VARS,
+} from './ai-tools-client';
 export * from './types';
 export type {
   AdCopy,
@@ -52,3 +57,14 @@ export type {
   RevenueMultiplierStrategy,
   MultiplierOptions,
 } from './revenue-multipliers';
+export type {
+  AIToolsConfig,
+  GeneratedImage,
+  GeneratedCopy,
+  GeneratedVideo,
+  AdCreativeRequest,
+  CopyWorkflowRequest,
+  RunwayVideoRequest,
+  SynthesiaVideoRequest,
+  HeyGenVideoRequest,
+} from './ai-tools-client';
